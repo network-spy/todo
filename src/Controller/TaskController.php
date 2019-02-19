@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\DTO\TaskDTO;
 use App\Form\TaskType;
+use App\Transformers\TaskCollectionToDtoTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Controller\FOSRestController;
@@ -43,10 +45,16 @@ class TaskController extends FOSRestController implements ClassResourceInterface
         $this->taskRepository = $taskRepository;
     }
 
+    /**
+     * @return \FOS\RestBundle\View\View
+     */
     public function cgetAction()
     {
+        $tasks = $this->taskRepository->findAll();
+        $transformer = new TaskCollectionToDtoTransformer();
+
         return $this->view(
-            $this->taskRepository->findAll()
+            $transformer->transform($tasks)
         );
     }
 
@@ -57,7 +65,9 @@ class TaskController extends FOSRestController implements ClassResourceInterface
     public function getAction(int $id)
     {
         return $this->view(
-            $this->findTaskById($id)
+            new TaskDTO(
+                $this->findTaskById($id)
+            )
         );
     }
 

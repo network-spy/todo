@@ -13,13 +13,13 @@ use FOS\RestBundle\Controller\Annotations\Get;
 class HealthCheckerController extends FOSRestController
 {
     /**
-     * @Get(path="ping")
+     * @Get(path="/")
      * @return JsonResponse
      */
     public function getAction()
     {
         return new JsonResponse(
-            'pong'
+            'alive'
         );
     }
 }
