@@ -1,3 +1,17 @@
 task:
     type: rest
     resource: App\Controller\TaskController
+    prefix: api
+
+api_login_check:
+    path: /api/login_check
+    methods: [POST]
+
+api_register:
+    path: /api/register
+    controller: App\Controller\AuthController::register
+    methods: [POST]
+
+api:
+    path: /api
+    controller: App\Controller\AuthController::api
