@@ -11,10 +11,10 @@ use App\DTO\TaskDTO;
 class TaskCollectionToDtoTransformer
 {
     /**
-     * @param iterable $tasks
-     * @return iterable
+     * @param array $tasks
+     * @return array
      */
-    public function transform(iterable $tasks): iterable
+    public function transform(array $tasks): array
     {
         $tasksDTO = [];
         foreach ($tasks as $task) {

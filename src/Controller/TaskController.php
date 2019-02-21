@@ -7,8 +7,8 @@ use App\Form\TaskType;
 use App\Transformers\TaskCollectionToDtoTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
-use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Routing\ClassResourceInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Task;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * @package App\Controller
  * @RouteResource("Task", pluralize=false)
  */
-class TaskController extends FOSRestController implements ClassResourceInterface
+class TaskController extends AbstractController implements ClassResourceInterface
 {
     /**
      * @var EntityManagerInterface
@@ -53,8 +53,9 @@ class TaskController extends FOSRestController implements ClassResourceInterface
         $tasks = $this->taskRepository->findAll();
         $transformer = new TaskCollectionToDtoTransformer();
 
-        return $this->view(
-            $transformer->transform($tasks)
+        return $this->json(
+            $transformer->transform($tasks),
+            Response::HTTP_OK
         );
     }
 
@@ -64,10 +65,11 @@ class TaskController extends FOSRestController implements ClassResourceInterface
      */
     public function getAction(int $id)
     {
-        return $this->view(
+        return $this->json(
             new TaskDTO(
                 $this->findTaskById($id)
-            )
+            ),
+            Response::HTTP_OK
         );
     }
 
@@ -84,10 +86,15 @@ class TaskController extends FOSRestController implements ClassResourceInterface
         if (false === $form->isValid()) {
             return $this->view($form);
         }
-        $this->entityManager->persist($form->getData());
+        $task = $form->getData();
+        $task->setUser($this->getUser());
+        $this->entityManager->persist($task);
         $this->entityManager->flush();
 
-        return $this->view(null, Response::HTTP_CREATED);
+        return $this->json(
+            new TaskDTO($task),
+            Response::HTTP_CREATED
+        );
     }
 
     /**
@@ -111,9 +118,17 @@ class TaskController extends FOSRestController implements ClassResourceInterface
         if (false === $form->isValid()) {
             return $this->view($form);
         }
+        $task = $form->getData();
+        if (!$task->getId()) {
+            $task->setUser($this->getUser());
+            $this->entityManager->persist($task);
+        }
         $this->entityManager->flush();
 
-        return $this->view(null, $statusCode);
+        return $this->json(
+            new TaskDTO($task),
+            $statusCode
+        );
     }
 
     /**
@@ -132,9 +147,13 @@ class TaskController extends FOSRestController implements ClassResourceInterface
         if (false === $form->isValid()) {
             return $this->view($form);
         }
+        $task = $form->getData();
         $this->entityManager->flush();
 
-        return $this->view(null, Response::HTTP_OK);
+        return $this->json(
+            new TaskDTO($task),
+            Response::HTTP_OK
+        );
     }
 
     /**
@@ -147,7 +166,7 @@ class TaskController extends FOSRestController implements ClassResourceInterface
         $this->entityManager->remove($task);
         $this->entityManager->flush();
 
-        return $this->view(null, Response::HTTP_NO_CONTENT);
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 
     /**

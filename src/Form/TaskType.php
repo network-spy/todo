@@ -6,32 +6,40 @@ use App\Entity\Task;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
+/**
+ * Class TaskType
+ * @package App\Form
+ */
 class TaskType extends AbstractType
 {
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('content')
             ->add(
-                'createdAt',
-                DateTimeType::class,
+                'completed',
+                CheckboxType::class,
                 [
-                    'widget' => 'single_text',
-                    'format' => 'yyyy-MM-dd\'T\'HH:mm:ssZZZZ'
+                    'required' => false,
                 ]
-
             )
-            ->add('completed')
-            ->add('user')
         ;
     }
 
+    /**
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => Task::class,
+            'csrf_protection' => false,
         ]);
     }
 }

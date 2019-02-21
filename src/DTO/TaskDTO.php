@@ -45,11 +45,11 @@ class TaskDTO
         $this->content = $task->getContent();
         $this->createdAt = $task->getCreatedAt();
         $this->completed = $task->getCompleted();
-        $this->userId = $task->getUser()->getId();
+        $this->userId = $task->getUser() ? $task->getUser()->getId() : 0;
     }
 
     /**
-     * @return mixed
+     * @return inx
      */
     public function getId()
     {
@@ -57,7 +57,7 @@ class TaskDTO
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getContent()
     {
@@ -65,7 +65,7 @@ class TaskDTO
     }
 
     /**
-     * @return mixed
+     * @return datetime
      */
     public function getCreatedAt()
     {
@@ -73,7 +73,7 @@ class TaskDTO
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function getCompleted()
     {
@@ -81,7 +81,7 @@ class TaskDTO
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getUserId()
     {

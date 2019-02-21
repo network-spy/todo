@@ -11,6 +11,7 @@ class AuthControllerTest extends WebTestCase
 
     public function testApiAccess()
     {
+        $client = $this->getClient();
         $username = uniqid('testUser');
         $password = 'testPassword';
         $this->register($username, $password);
@@ -19,15 +20,15 @@ class AuthControllerTest extends WebTestCase
             'HTTP_Authorization' => "Bearer {$accessToken}",
             'CONTENT_TYPE' => 'application/json'
         ];
-        $this->getClient()->request(
+        $client->request(
             'GET',
             '/api',
             [],
             [],
             $headers
         );
-        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $content = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        $content = json_decode($client->getResponse()->getContent(), true);
         $expectedContent = ['username' => $username];
         $this->assertEquals($expectedContent, $content);
     }

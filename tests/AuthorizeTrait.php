@@ -33,19 +33,20 @@ trait AuthorizeTrait
      */
     protected function register($username, $password)
     {
+        $client = $this->getClient();
         $credentials = [
             'username' => $username,
             'password' => $password
         ];
-        $this->getClient()->request(
+        $client->request(
             'POST',
             '/api/register',
             $credentials,
             [],
             ['CONTENT_TYPE' => 'application/json']
         );
-        $this->assertEquals(Response::HTTP_CREATED, $this->client->getResponse()->getStatusCode());
-        $content = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals(Response::HTTP_CREATED, $client->getResponse()->getStatusCode());
+        $content = json_decode($client->getResponse()->getContent(), true);
         $expectedContent = ['username' => $username];
         $this->assertEquals($expectedContent, $content);
     }
@@ -53,15 +54,16 @@ trait AuthorizeTrait
     /**
      * @param $username
      * @param $password
-     * @return mixed
+     * @return string
      */
     protected function login($username, $password): string
     {
+        $client = $this->getClient();
         $credentials = [
             'username' => $username,
             'password' => $password
         ];
-        $this->getClient()->request(
+        $client->request(
             'POST',
             '/api/login_check',
             [],
@@ -69,8 +71,8 @@ trait AuthorizeTrait
             ['CONTENT_TYPE' => 'application/json'],
             json_encode($credentials)
         );
-        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $content = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        $content = json_decode($client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('token', $content);
         $this->assertNotEmpty($content['token']);
 

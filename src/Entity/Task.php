@@ -37,6 +37,15 @@ class Task
     private $user;
 
     /**
+     * Task constructor.
+     */
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+        $this->completed = false;
+    }
+
+    /**
      * @return int|null
      */
     public function getId(): ?int
