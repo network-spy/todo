@@ -14,6 +14,9 @@ use App\Entity\Task;
 use Symfony\Component\HttpFoundation\Response;
 use App\Repository\TaskRepository;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 
 /**
  * Class TaskController
@@ -46,6 +49,15 @@ class TaskController extends AbstractController implements ClassResourceInterfac
     }
 
     /**
+     * List of user's tasks
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns list of user's tasks",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=TaskDTO::class))
+     *     )
+     * )
      * @return \FOS\RestBundle\View\View
      */
     public function cgetAction()
@@ -60,6 +72,21 @@ class TaskController extends AbstractController implements ClassResourceInterfac
     }
 
     /**
+     * Single user's task
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns user's task",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=TaskDTO::class))
+     *     )
+     * )
+     * @SWG\Parameter(
+     *     name="id",
+     *     in="path",
+     *     type="integer",
+     *     description="User's task id"
+     * )
      * @param int $id
      * @return \FOS\RestBundle\View\View
      */
@@ -74,6 +101,15 @@ class TaskController extends AbstractController implements ClassResourceInterfac
     }
 
     /**
+     * Create user's task
+     * @SWG\Response(
+     *     response=201,
+     *     description="Returns created user's task",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=TaskDTO::class))
+     *     )
+     * )
      * @param Request $request
      * @return \FOS\RestBundle\View\View
      */
@@ -98,6 +134,23 @@ class TaskController extends AbstractController implements ClassResourceInterfac
     }
 
     /**
+     * Fully update existing user's task or create new one (if task with provided id not found)
+     * @SWG\Response(
+     *     response=201,
+     *     description="Returns created user's task",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=TaskDTO::class))
+     *     )
+     * )
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns updated user's task",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=TaskDTO::class))
+     *     )
+     * )
      * @param Request $request
      * @param int $id
      * @return \FOS\RestBundle\View\View
@@ -132,6 +185,15 @@ class TaskController extends AbstractController implements ClassResourceInterfac
     }
 
     /**
+     * Partially update existing user's task by id
+     * @SWG\Response(
+     *     response=201,
+     *     description="Returns updated user's task",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=TaskDTO::class))
+     *     )
+     * )
      * @param Request $request
      * @param int $id
      * @return \FOS\RestBundle\View\View
@@ -157,6 +219,11 @@ class TaskController extends AbstractController implements ClassResourceInterfac
     }
 
     /**
+     * Delete user's task by id
+     * @SWG\Response(
+     *     response=204,
+     *     description="Delete user's task",
+     * )
      * @param int $id
      * @return \FOS\RestBundle\View\View
      */

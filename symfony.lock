@@ -146,6 +146,9 @@
             "ref": "fb7e19da7f013d0d422fa9bce16f5c510e27609b"
         }
     },
+    "symfony/asset": {
+        "version": "v4.2.3"
+    },
     "symfony/browser-kit": {
         "version": "v4.2.3"
     },
