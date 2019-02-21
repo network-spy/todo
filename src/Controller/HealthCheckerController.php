@@ -3,14 +3,14 @@
 namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
-use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations\Get;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 /**
  * Class HealthCheckerController
  * @package App\Controller
  */
-class HealthCheckerController extends FOSRestController
+class HealthCheckerController extends AbstractController
 {
     /**
      * @Get(path="/")
