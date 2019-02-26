@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Transformers;
+namespace App\Transformers\Task;
 
 use App\DTO\TaskDTO;
 

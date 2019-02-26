@@ -76,16 +76,25 @@ class User implements UserInterface
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getRoles()
     {
-        return array('ROLE_USER');
+        return ['ROLE_USER'];
     }
 
+    /**
+     * @return string
+     */
     public function getSalt()
     {
         return 'chocolate_salty_balls';
     }
 
+    /**
+     * 
+     */
     public function eraseCredentials()
     {
     }

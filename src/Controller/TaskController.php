@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\DTO\TaskDTO;
 use App\Form\TaskType;
-use App\Transformers\TaskCollectionToDtoTransformer;
+use App\Transformers\Task\TaskCollectionToDtoTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Routing\ClassResourceInterface;
@@ -13,10 +15,10 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Task;
 use Symfony\Component\HttpFoundation\Response;
 use App\Repository\TaskRepository;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Swagger\Annotations as SWG;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
 
 /**
  * Class TaskController
@@ -160,6 +162,7 @@ class TaskController extends AbstractController implements ClassResourceInterfac
         $statusCode = Response::HTTP_OK;
         try {
             $task = $this->findTaskById($id);
+            $this->compareWithCurrentUserId($task->getUser()->getId());
         } catch (NotFoundHttpException $e) {
             $task = new Task();
             $statusCode = Response::HTTP_CREATED;
@@ -201,6 +204,7 @@ class TaskController extends AbstractController implements ClassResourceInterfac
     public function patchAction(Request $request, int $id)
     {
         $task = $this->findTaskById($id);
+        $this->compareWithCurrentUserId($task->getUser()->getId());
         $form = $this->createForm(TaskType::class, $task);
         $form->submit(
             $request->request->all(),
@@ -230,6 +234,7 @@ class TaskController extends AbstractController implements ClassResourceInterfac
     public function deleteAction(int $id)
     {
         $task = $this->findTaskById($id);
+        $this->compareWithCurrentUserId($task->getUser()->getId());
         $this->entityManager->remove($task);
         $this->entityManager->flush();
 
@@ -237,10 +242,10 @@ class TaskController extends AbstractController implements ClassResourceInterfac
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return Task|null
      */
-    private function findTaskById($id): ?Task
+    private function findTaskById(int $id): ?Task
     {
         $task = $this->taskRepository->find($id);
         if (null === $task) {
@@ -248,5 +253,17 @@ class TaskController extends AbstractController implements ClassResourceInterfac
         }
 
         return $task;
+    }
+
+    /**
+     * @param int $id
+     */
+    private function compareWithCurrentUserId(int $id)
+    {
+        if  (((int) $this->getUser()->getId()) === $id) {
+            return;
+        }
+
+        throw new AccessDeniedHttpException();
     }
 }
